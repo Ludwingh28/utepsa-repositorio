@@ -1,0 +1,93 @@
+
+CREATE DATABASE utepsabd;
+
+-- Tabla Rol (se crea primero porque Usuario la necesita)
+CREATE TABLE Rol (
+    Rol_id INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Tabla Usuario (se crea después de Rol)
+CREATE TABLE Usuario (
+    Id_Usuario INT PRIMARY KEY AUTO_INCREMENT,
+    Usuario VARCHAR(50) NOT NULL UNIQUE,
+    Nombre VARCHAR(100) NOT NULL,
+    Contrasena VARCHAR(255) NOT NULL,
+    Rol_id INT NOT NULL,
+    FOREIGN KEY (Rol_id) REFERENCES Rol(Rol_id) ON DELETE CASCADE
+);
+
+
+
+-- Tabla Universidad
+CREATE TABLE Universidad (
+    Universidad_id INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(100) NOT NULL
+);
+
+-- Tabla Facultad (depende de Universidad)
+CREATE TABLE Facultad (
+    Facultad_id INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(100) NOT NULL,
+    Universidad_id INT,
+    FOREIGN KEY (Universidad_id) REFERENCES Universidad(Universidad_id) ON DELETE CASCADE
+);
+
+-- Tabla Categoria
+CREATE TABLE Categoria (
+    Categoria_id INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(100) NOT NULL
+);
+
+-- Tabla Documento (creada antes de las tablas intermedias)
+CREATE TABLE Documento (
+    Id_Documento INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre_largo VARCHAR(255) NOT NULL,
+    Nombre_corto VARCHAR(100) NOT NULL,
+    Ruta_archivo VARCHAR(255) NOT NULL,
+    fecha DATE NOT NULL
+);
+
+
+-- Tabla Tag
+CREATE TABLE Tag (
+    Tag_id INT PRIMARY KEY AUTO_INCREMENT,
+    Palabra VARCHAR(50) NOT NULL
+);
+
+-- Tabla intermedia Tag_Documento (relación muchos a muchos)
+CREATE TABLE Tag_Documento (
+    Documento_id INT NOT NULL,
+    Tag_id INT NOT NULL,
+    PRIMARY KEY (Documento_id, Tag_id),
+    FOREIGN KEY (Documento_id) REFERENCES Documento(Id_Documento) ON DELETE CASCADE,
+    FOREIGN KEY (Tag_id) REFERENCES Tag(Tag_id) ON DELETE CASCADE
+);
+
+-- Tabla intermedia Documento_Categoria (relación muchos a muchos)
+CREATE TABLE Documento_Categoria (
+    Categoria_id INT NOT NULL,
+    Documento_id INT NOT NULL,
+    PRIMARY KEY (Categoria_id, Documento_id),
+    FOREIGN KEY (Categoria_id) REFERENCES Categoria(Categoria_id) ON DELETE CASCADE,
+    FOREIGN KEY (Documento_id) REFERENCES Documento(Id_Documento) ON DELETE CASCADE
+);
+
+-- Tabla Documento_Tutor (relación muchos a muchos)
+CREATE TABLE Documento_Tutor (
+    Documento_id INT NOT NULL,
+    Usuario_id INT NOT NULL,
+    PRIMARY KEY (Documento_id, Usuario_id),
+    FOREIGN KEY (Documento_id) REFERENCES Documento(Id_Documento) ON DELETE CASCADE,
+    FOREIGN KEY (Usuario_id) REFERENCES Usuario(Id_Usuario) ON DELETE CASCADE
+);
+
+
+-- Tabla Documento_Facultad (relación muchos a muchos)
+CREATE TABLE Documento_Facultad (
+    Documento_id INT NOT NULL,
+    Facultad_id INT NOT NULL,
+    PRIMARY KEY (Documento_id, Facultad_id),
+    FOREIGN KEY (Documento_id) REFERENCES Documento(Id_Documento) ON DELETE CASCADE,
+    FOREIGN KEY (Facultad_id) REFERENCES Facultad(Facultad_id) ON DELETE CASCADE
+);

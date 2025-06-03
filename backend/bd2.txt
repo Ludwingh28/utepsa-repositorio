@@ -1,0 +1,79 @@
+SCRIPT SQL
+-- Crear la base de datos
+CREATE DATABASE utepsabd;
+USE Investigaciones_Utepsa;
+
+
+-- Tabla Usuario
+CREATE TABLE Usuario (
+    Id_Usuario INT PRIMARY KEY AUTO_INCREMENT,
+    Usuario VARCHAR(50) NOT NULL UNIQUE,
+    Nombre VARCHAR(100) NOT NULL,
+    Contraseña VARCHAR(255) NOT NULL,
+    Rol_id INT NOT NULL,
+    FOREIGN KEY (Rol_id) REFERENCES Rol(Rol_id)
+);
+
+-- Tabla Rol
+CREATE TABLE Rol (
+    Rol_id INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Tabla Facultad
+CREATE TABLE Facultad (
+    Facultad_id INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(100) NOT NULL
+);
+
+-- Tabla Categoria
+CREATE TABLE Categoria (
+    Categoria_id INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(100) NOT NULL
+);
+
+-- Tabla Documento
+CREATE TABLE Documento (
+    Id_Documento INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre_largo VARCHAR(255) NOT NULL,
+    Nombre_corto VARCHAR(100) NOT NULL,
+    Estudiante_id INT,
+    Usuario_id INT,
+    Tutor_id INT,
+    Facultad_id INT,
+    Categoria_id INT,
+    Ruta_archivo VARCHAR(255) NOT NULL,
+    fecha DATE NOT NULL,
+    FOREIGN KEY (Estudiante_id) REFERENCES Estudiante(Estudiante_id),
+    FOREIGN KEY (Usuario_id) REFERENCES Usuario(Id_Usuario),
+    FOREIGN KEY (Tutor_id) REFERENCES Tutores(Tutores_id),
+    FOREIGN KEY (Facultad_id) REFERENCES Facultad(Facultad_id),
+    FOREIGN KEY (Categoria_id) REFERENCES Categoria(Categoria_id)
+);
+
+-- Tabla Tag
+CREATE TABLE Tag (
+    Tag_id INT PRIMARY KEY AUTO_INCREMENT,
+    Documento_id INT,
+    Palabra VARCHAR(50) NOT NULL,
+    FOREIGN KEY (Documento_id) REFERENCES Documento(Id_Documento)
+);
+
+-- Tabla Tag_Documento (tabla intermedia para la relación muchos a muchos)
+CREATE TABLE Tag_Documento (
+    Documento_id INT,
+    Tag_id INT,
+    PRIMARY KEY (Documento_id, Tag_id),
+    FOREIGN KEY (Documento_id) REFERENCES Documento(Id_Documento),
+    FOREIGN KEY (Tag_id) REFERENCES Tag(Tag_id)
+);
+
+-- Tabla Documento_Categoria (tabla intermedia para la relación muchos a muchos)
+CREATE TABLE Documento_Categoria (
+    Categoria_id INT,
+    Documento_id INT,
+    PRIMARY KEY (Categoria_id, Documento_id),
+    FOREIGN KEY (Categoria_id) REFERENCES Categoria(Categoria_id),
+    FOREIGN KEY (Documento_id) REFERENCES Documento(Id_Documento)
+);
+

@@ -1,0 +1,1 @@
+export const URL_BASE = 'http://localhost/utepsa-repositorio/backend/src';
